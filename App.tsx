@@ -8,13 +8,10 @@
 import React from 'react';
 import {
   SafeAreaView,
-  View,
   FlatList,
-  StyleSheet,
-  Text,
-  StatusBar,
-  Image,
 } from 'react-native';
+import Item from './components/item';
+import styles from './utils/styles';
 
 type ItemProps = {name: string; image: string; description: string};
 const backend = 'https://pokeapi.co/api/v2/';
@@ -74,19 +71,6 @@ const fetchPokemon = async (id: number): Promise<void> => {
   dataPokemon.push(parsedPokemon);
 };
 
-const Item = ({name, image, description}: ItemProps) => (
-  <View style={styles.item}>
-    <Image
-      style={styles.imageContainer}
-      source={{
-        uri: image,
-      }}
-    />
-    <Text style={styles.title}>{name}</Text>
-    <Text style={styles.description}>{description}</Text>
-  </View>
-);
-
 const App = () => {
   fetchAllPokemons();
   return (
@@ -106,32 +90,5 @@ const App = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-  },
-  item: {
-    backgroundColor: 'black',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 20,
-    flexgrow: 1,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 22,
-  },
-  description: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  imageContainer: {
-    width: 100,
-    height: 100,
-  },
-});
 
 export default App;
