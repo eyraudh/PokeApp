@@ -1,83 +1,37 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
 import Item from './components/item';
 import styles from './utils/styles';
-
-type ItemProps = {name: string; image: string; description: string};
-const backend = 'https://pokeapi.co/api/v2/';
-const dataPokemon: {
-  id: number;
-  name: string;
-  image: string;
-  description: string;
-}[] = [];
-let startSearch = 1;
-let endSearch = 10;
-
-/**
- * This interface was previously used to try to make the keyExtractor work
- */
-// interface Pokemon {
-//   id: number;
-//   name: string;
-//   image: string;
-// }
-
-/**
- * This function with find all pokemons which pokedex number
- * is between startSearch and endSearch
- */
-const fetchAllPokemons = (): void => {
-  for (let i = startSearch; i < endSearch; i++) {
-    fetchPokemon(i);
-  }
-  startSearch = endSearch;
-  endSearch += 10;
-};
-
-/**
- * This function will fetch in the pokemon with the pokedex number
- * and extract the number, its name, and its sprite.
- * @param id the is of the pokemon to find
- */
-const fetchPokemon = async (id: number): Promise<void> => {
-  const dataNameImage: Response = await fetch(`${backend}pokemon/${id}`);
-  const pokemon: any = await dataNameImage.json();
-  const dataDescription: Response = await fetch(
-    `${backend}pokemon-species/${id}`,
-  );
-  const pokemonDescription: any = await dataDescription.json();
-  const parseDesc = pokemonDescription.flavor_text_entries[0].flavor_text
-    .replace(/\s+/g, ' ') // description were having trailing spaces.
-    .trim();
-  console.log(parseDesc);
-  const parsedPokemon = {
-    id: pokemon.id,
-    name: pokemon.name,
-    image: pokemon.sprites.front_shiny,
-    description: parseDesc,
-  };
-
-  dataPokemon.push(parsedPokemon);
-};
+import fetchAllPokemons from './backend/fetchPokemons';
 
 const App = () => {
-  fetchAllPokemons();
+  const [startSearch, setStartSearch] = useState(1);
+  const [endSearch, setEndSearch] = useState(10);
+  const [dataPokemon, setDataPokemon] = useState<{
+    id: number;
+    name: string;
+    image: string;
+    description: string;
+  }[]>([])
+
+  useEffect(() =>  {
+    handleEnd();
+  }, [])
+
+  function handleEnd() {
+    setDataPokemon(dataPokemon.concat(fetchAllPokemons(startSearch, endSearch)));
+    setStartSearch(endSearch);
+    setEndSearch(10 + endSearch);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={dataPokemon}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <Item
             name={item.name}
             image={item.image}
@@ -85,7 +39,7 @@ const App = () => {
           />
         )}
         onEndReachedThreshold={0.2}
-        onEndReached={fetchAllPokemons}
+        onEndReached={() => { handleEnd() }}
       />
     </SafeAreaView>
   );
