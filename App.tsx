@@ -13,15 +13,12 @@ import {
 import Item from './components/item';
 import styles from './utils/styles';
 
-type ItemProps = {name: string; image: string; description: string};
 const backend = 'https://pokeapi.co/api/v2/';
-const dataPokemon: {
+let dataPokemon: {
   id: number;
   name: string;
-  image: string;
-  description: string;
 }[] = [];
-let startSearch = 1;
+let startSearch = 0;
 let endSearch = 10;
 
 /**
@@ -31,61 +28,39 @@ let endSearch = 10;
 //   id: number;
 //   name: string;
 //   image: string;
-// }
+// }const
 
 /**
  * This function with find all pokemons which pokedex number
  * is between startSearch and endSearch
  */
-const fetchAllPokemons = (): void => {
-  for (let i = startSearch; i < endSearch; i++) {
-    fetchPokemon(i);
-  }
+const fetchAllPokemons = async (startSearch: number, endSearch: number): Promise<void> => {
+  const extractPokemon: Response = await fetch(`${backend}pokemon?limit=${endSearch}&offset=${startSearch}`);
+  const pokemon = await extractPokemon.json();
+  console.log("a\n");
+  pokemon.results.forEach((element: any, index: number) => {
+    dataPokemon.push({ id: index + 1, name: element.name })
+  });
+  console.log("b\n");
   startSearch = endSearch;
   endSearch += 10;
 };
 
-/**
- * This function will fetch in the pokemon with the pokedex number
- * and extract the number, its name, and its sprite.
- * @param id the is of the pokemon to find
- */
-const fetchPokemon = async (id: number): Promise<void> => {
-  const dataNameImage: Response = await fetch(`${backend}pokemon/${id}`);
-  const pokemon: any = await dataNameImage.json();
-  const dataDescription: Response = await fetch(
-    `${backend}pokemon-species/${id}`,
-  );
-  const pokemonDescription: any = await dataDescription.json();
-  const parseDesc = pokemonDescription.flavor_text_entries[0].flavor_text
-    .replace(/\s+/g, ' ') // description were having trailing spaces.
-    .trim();
-  console.log(parseDesc);
-  const parsedPokemon = {
-    id: pokemon.id,
-    name: pokemon.name,
-    image: pokemon.sprites.front_shiny,
-    description: parseDesc,
-  };
-
-  dataPokemon.push(parsedPokemon);
-};
-
 const App = () => {
-  fetchAllPokemons();
+  fetchAllPokemons(startSearch, endSearch);
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={dataPokemon}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <Item
             name={item.name}
-            image={item.image}
-            description={item.description}
+            imageId={item.id}
+          // description={item.description}
           />
         )}
         onEndReachedThreshold={0.2}
-        onEndReached={fetchAllPokemons}
+        onEndReached={() => fetchAllPokemons(startSearch, endSearch)}
       />
     </SafeAreaView>
   );
