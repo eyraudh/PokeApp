@@ -1,4 +1,5 @@
 .vscode/
+.idea/
 android/
 ios/
 node_modules/
