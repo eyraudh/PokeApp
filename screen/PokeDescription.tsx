@@ -3,17 +3,21 @@ import {
   View,
   Text,
   Image,
+  Pressable,
 } from 'react-native';
 import styles from '../utils/styles';
 import CapacityScreen from './CapacityScreen';
 
 type pokeProps = { description: string, stats: { statName: string, value: number }[] };
-type infoProps = { text: pokeProps; imageId: number };
+type infoProps = { text: pokeProps; imageId: number; goBack: (arg0: any) => void };
 
 
-const PokeDescription = ({ text, imageId }: infoProps) => {
+const PokeDescription = ({ text, imageId, goBack }: infoProps) => {
   return (
     <View style={styles.infosContainer}>
+        <Pressable style={styles.buttonContainer} onPress={goBack}>
+          <Text style={{color: 'black', fontSize: 30}}> {'<'} </Text>
+        </Pressable>
       <View style={styles.infos}>
         <Image
           style={styles.largeImageContainer}

@@ -17,8 +17,8 @@ let dataPokemon: {
  * This function with find all pokemons which pokedex number
  * is between startSearch and endSearch
  */
-const fetchAllPokemons = async (startSearch: number, endSearch: number): Promise<void> => {
-  const extractPokemon: Response = await fetch(`${backend}pokemon?limit=${endSearch}&offset=${startSearch}`);
+const fetchAllPokemons = async (startSearch: number): Promise<void> => {
+  const extractPokemon: Response = await fetch(`${backend}pokemon?limit=10&offset=${startSearch}`);
   const pokemon = await extractPokemon.json();
   pokemon.results.forEach((element: any, index: number) => {
     dataPokemon.push({ id: index + 1 + startSearch, name: element.name })
@@ -53,14 +53,12 @@ type Pokemonprops = {
 
 const App = () => {
   const [startSearch, setStartSearch] = useState(0);
-  const [endSearch, setEndSearch] = useState(10);
   const [showDesc, setShowDesc] = useState(true);
   const [desc, setDesc] = useState<Pokemonprops>({ description: "", stats: []});
   const [pokemonId, setPokemonId] = useState(1);
   useEffect(() => {
-    fetchAllPokemons(startSearch, endSearch);
-    setStartSearch(endSearch);
-    setEndSearch(endSearch + 10)
+    fetchAllPokemons(startSearch);
+    setStartSearch(startSearch +10);
   }, dataPokemon);
 
   return (
@@ -79,15 +77,14 @@ const App = () => {
               }}
             />
           )}
-          onEndReachedThreshold={0.2}
+          onEndReachedThreshold={0.7}
           onEndReached={() => {
-            fetchAllPokemons(startSearch, endSearch);
-            setStartSearch(endSearch);
-            setEndSearch(endSearch + 10);
+            fetchAllPokemons(startSearch);
+            setStartSearch(startSearch + 10);
           }}
         />
         :
-        <PokeDescription text={desc} imageId={pokemonId} />
+        <PokeDescription text={desc} imageId={pokemonId} goBack={() => setShowDesc(true)}/>
       }
     </SafeAreaView>
   );

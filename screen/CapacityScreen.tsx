@@ -1,11 +1,4 @@
 import React from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  processColor
-} from 'react-native';
 import { VictoryArea, VictoryChart, VictoryTheme, VictoryPolarAxis } from 'victory-native';
 
 type statProps = { statName: string, value: number };
@@ -25,11 +18,9 @@ const CapacityScreen = ({ stats }: capacityProps) => {
               labelPlacement="perpendicular"
               style={{
                 axisLabel: { fill: "orange" }
-
               }}
               axisValue={d}
               domain={{ x: [0, 100], y: [0, 252] }}
-
             />
           );
         })

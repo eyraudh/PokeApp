@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   infos: {
-    backgroundColor: 'black',
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
@@ -44,6 +43,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  buttonContainer: {
+    backgroundColor: 'white',
+    padding: 2,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
+    height: 50,
+  }
 });
 
 export default styles
